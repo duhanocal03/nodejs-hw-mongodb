@@ -18,8 +18,8 @@ const getAllContacts = async (req, res) => {
   });
 };
 
-const getContactById = async (req, res, next) => {
-  try {
+const getContactById = async (req, res) => {
+  
     const { contactId } = req.params;
     const contact = await getContactByIdService(contactId);
 
@@ -32,9 +32,7 @@ const getContactById = async (req, res, next) => {
       message: `Successfully found contact with id ${contactId}!`,
       data: contact,
     });
-  } catch (error) {
-    next(error);
-  }
+  
 };
 
 const createContact = async (req, res) => {

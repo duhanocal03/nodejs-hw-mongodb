@@ -7,3 +7,5 @@ export const ctrlWrapper = (controller) => {
     }
   };
 };
+
+module.exports = ctrlWrapper;
