@@ -9,12 +9,28 @@ const {
 } = require('../services/contacts');
 
 const getAllContacts = async (req, res) => {
-  const contacts = await getAllContactsService();
+  const {
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+    type,
+    isFavourite,
+  } = req.query;
+
+  const result = await getAllContactsService({
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+    type,
+    isFavourite,
+  });
 
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
-    data: contacts,
+    data: result,
   });
 };
 
