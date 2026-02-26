@@ -14,7 +14,7 @@ const {
   getAllContacts,
   getContactById,
   createContact,
-  updateContact,
+  patchContact,
   deleteContact,
 } = require('../controllers/contacts');
 
@@ -36,7 +36,7 @@ router.patch(
   '/:contactId',
   isValidId,
   validateBody(updateContactSchema),
-  ctrlWrapper(updateContact)
+  ctrlWrapper(patchContact)
 );
 
 router.delete(
