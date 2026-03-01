@@ -4,6 +4,7 @@ const router = express.Router();
 const ctrlWrapper = require('../utils/ctrlWrapper');
 const validateBody = require('../middlewares/validateBody');
 const isValidId = require('../middlewares/isValidId');
+const authenticate = require('../middlewares/authenticate');
 
 const {
   contactSchema,
@@ -17,6 +18,8 @@ const {
   patchContact,
   deleteContact,
 } = require('../controllers/contacts');
+
+router.use(authenticate);
 
 router.get('/',ctrlWrapper(getAllContacts));
 

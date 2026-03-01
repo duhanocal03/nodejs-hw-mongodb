@@ -1,6 +1,7 @@
 const Contact = require('../db/Contact');
 
 const getAllContactsService = async ({
+  userId,
   page = 1,
   perPage = 10,
   sortBy = 'name',
@@ -10,26 +11,18 @@ const getAllContactsService = async ({
 }) => {
   const skip = (page - 1) * perPage;
 
-  const filter = {};
+  const filter = { userId };
 
-  // contactType filtre
-  if (type) {
-    filter.contactType = type;
-  }
+  if (type) filter.contactType = type;
+  if (isFavourite !== undefined) filter.isFavourite = isFavourite === 'true';
 
-  // isFavourite filtre (string -> boolean)
-  if (isFavourite !== undefined) {
-    filter.isFavourite = isFavourite === 'true';
-  }
-
-  const totalItems = await Contact.countDocuments(filter);
-
-  const contacts = await Contact.find(filter)
-    .skip(skip)
-    .limit(perPage)
-    .sort({
-      [sortBy]: sortOrder === 'desc' ? -1 : 1,
-    });
+  const [contacts, totalItems] = await Promise.all([
+    Contact.find(filter)
+      .skip(skip)
+      .limit(perPage)
+      .sort({ [sortBy]: sortOrder === 'desc' ? -1 : 1 }),
+    Contact.countDocuments(filter),
+  ]);
 
   const totalPages = Math.ceil(totalItems / perPage);
 
@@ -39,31 +32,30 @@ const getAllContactsService = async ({
     perPage: Number(perPage),
     totalItems,
     totalPages,
-    hasPreviousPage: page > 1,
-    hasNextPage: page < totalPages,
+    hasPreviousPage: Number(page) > 1,
+    hasNextPage: Number(page) < totalPages,
   };
 };
 
-const getContactByIdService = async (contactId) => {
-  return Contact.findById(contactId);
+const getContactByIdService = async (userId, contactId) => {
+  return Contact.findOne({ _id: contactId, userId });
 };
 
 const createContactService = async (payload) => {
   return Contact.create(payload);
 };
 
-const updateContactService = async (contactId, payload) => {
-  return Contact.findByIdAndUpdate(
-    contactId,
+const updateContactService = async (userId, contactId, payload) => {
+  return Contact.findOneAndUpdate(
+    { _id: contactId, userId },
     payload,
     { new: true }
   );
 };
 
-const deleteContactService = async (contactId) => {
-  return Contact.findByIdAndDelete(contactId);
+const deleteContactService = async (userId, contactId) => {
+  return Contact.findOneAndDelete({ _id: contactId, userId });
 };
-
 
 module.exports = {
   getAllContactsService,
