@@ -1,8 +1,9 @@
 const dotenv = require('dotenv');
+dotenv.config();
 const setupServer = require('./server');
 const initMongoConnection = require('./db/initMongoConnection');
 
-dotenv.config();
+
 
 const PORT = process.env.PORT || 3000;
 

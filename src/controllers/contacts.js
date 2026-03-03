@@ -7,6 +7,7 @@ const {
   updateContactService,
   deleteContactService
 } = require('../services/contacts');
+const uploadToCloudinary = require('../utils/uploadToCloudinary');
 
 const getAllContacts = async (req, res) => {
   const { page, perPage, sortBy, sortOrder, type, isFavourite } = req.query;
@@ -45,9 +46,16 @@ const getContactById = async (req, res) => {
 const createContact = async (req, res) => {
   const userId = req.user._id;
 
+  let photo = null;
+
+  if (req.file) {
+    photo = await uploadToCloudinary(req.file.buffer);
+  }
+
   const newContact = await createContactService({
     ...req.body,
     userId,
+    ...(photo && { photo }),
   });
 
   res.status(201).json({
@@ -60,7 +68,14 @@ const createContact = async (req, res) => {
 const patchContact = async (req, res) => {
   const { contactId } = req.params;
 
-  const updated = await updateContactService(req.user._id, contactId, req.body);
+  const payload = { ...req.body };
+
+  if (req.file) {
+    const photoUrl = await uploadToCloudinary(req.file.buffer);
+    payload.photo = photoUrl;
+  }
+
+  const updated = await updateContactService(req.user._id, contactId, payload);
 
   if (!updated) throw createHttpError(404, 'Contact not found');
 

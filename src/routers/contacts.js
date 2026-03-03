@@ -5,6 +5,7 @@ const ctrlWrapper = require('../utils/ctrlWrapper');
 const validateBody = require('../middlewares/validateBody');
 const isValidId = require('../middlewares/isValidId');
 const authenticate = require('../middlewares/authenticate');
+const upload = require('../middlewares/upload');
 
 const {
   contactSchema,
@@ -46,6 +47,22 @@ router.delete(
   '/:contactId',
   isValidId,
   ctrlWrapper(deleteContact)
+);
+
+router.post(
+  '/',
+  authenticate,
+  upload.single('photo'),
+  validateBody(contactSchema),
+  ctrlWrapper(createContact)
+);
+
+router.patch(
+  '/:contactId',
+  isValidId,
+  upload.single('photo'),
+  validateBody(updateContactSchema),
+  ctrlWrapper(patchContact)
 );
 
 module.exports = router;

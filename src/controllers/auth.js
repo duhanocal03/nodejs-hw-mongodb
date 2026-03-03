@@ -1,8 +1,10 @@
 const { registerUserService,
-    loginUserService,
-    refreshSessionService,
+        loginUserService,
+        refreshSessionService,
+        sendResetEmailService, 
+        resetPasswordService, 
 } = require('../services/auth');
- const { logoutUserService } = require('../services/auth');
+const { logoutUserService } = require('../services/auth');
 
 
 const register = async (req, res) => {
@@ -69,5 +71,27 @@ const logout = async (req, res) => {
   res.status(204).send();
 };
 
+const sendResetEmail = async (req, res) => {
+  const { email } = req.body;
 
-module.exports = { register, login, refresh,logout };
+  await sendResetEmailService(email);
+
+  res.status(200).json({
+    status: 200,
+    message: 'Reset password email has been successfully sent.',
+    data: {},
+  });
+};
+
+const resetPassword = async (req, res) => {
+  await resetPasswordService(req.body);
+
+  res.status(200).json({
+    status: 200,
+    message: 'Password has been successfully reset.',
+    data: {},
+  });
+};
+
+
+module.exports = { register, login, refresh,logout,sendResetEmail, resetPassword };
