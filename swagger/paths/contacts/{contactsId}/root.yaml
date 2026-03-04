@@ -1,0 +1,151 @@
+parameters:
+  - in: path
+    name: contactId
+    required: true
+    schema:
+      type: string
+    description: MongoDB contact id
+
+get:
+  tags:
+    - Contacts
+  summary: Get contact by id
+  operationId: getContactById
+  description: Returns a single contact for the authenticated user by contactId.
+  security:
+    - bearerAuth: []
+  responses:
+    '200':
+      description: Successfully found contact
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: Successfully found contact with id 69a38c116336fe2a290e1753!
+              data:
+                $ref: ../../../components/schemas/contact.yaml
+    '400':
+      description: Invalid contact id
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/error.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/error.yaml
+    '404':
+      description: Contact not found
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/error.yaml
+
+patch:
+  tags:
+    - Contacts
+  summary: Patch contact
+  operationId: patchContact
+  description: >
+    Updates an existing contact for the authenticated user.
+    Supports multipart/form-data and optional photo upload.
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+              minLength: 3
+              maxLength: 20
+            phoneNumber:
+              type: string
+              minLength: 3
+              maxLength: 20
+            email:
+              type: string
+              format: email
+            isFavourite:
+              type: boolean
+            contactType:
+              type: string
+              enum: [work, home, personal]
+            photo:
+              type: string
+              format: binary
+  responses:
+    '200':
+      description: Contact patched
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: integer
+                example: 200
+              message:
+                type: string
+                example: Successfully patched a contact!
+              data:
+                $ref: ../../../components/schemas/contact.yaml
+    '400':
+      description: Validation error or invalid contact id
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/error.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/error.yaml
+    '404':
+      description: Contact not found
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/error.yaml
+
+delete:
+  tags:
+    - Contacts
+  summary: Delete contact
+  operationId: deleteContact
+  description: Deletes a contact for the authenticated user.
+  security:
+    - bearerAuth: []
+  responses:
+    '204':
+      description: Contact deleted successfully (No Content)
+    '400':
+      description: Invalid contact id
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/error.yaml
+    '401':
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/error.yaml
+    '404':
+      description: Contact not found
+      content:
+        application/json:
+          schema:
+            $ref: ../../../components/schemas/error.yaml

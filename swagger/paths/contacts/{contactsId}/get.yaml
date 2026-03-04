@@ -1,0 +1,42 @@
+tags:
+  - Contacts
+summary: Get contact by id
+operationId: getContactById
+description: Returns a single contact for the authenticated user by contactId.
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: contactId
+    required: true
+    schema:
+      type: string
+    description: MongoDB contact id
+responses:
+  '200':
+    description: Successfully found contact
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully found contact with id 69a38c116336fe2a290e1753!
+            data:
+              $ref: ../../../components/schemas/contact.yaml
+  '401':
+    description: Unauthorized
+    content:
+      application/json:
+        schema:
+          $ref: ../../../components/schemas/error.yaml
+  '404':
+    description: Contact not found
+    content:
+      application/json:
+        schema:
+          $ref: ../../../components/schemas/error.yaml
